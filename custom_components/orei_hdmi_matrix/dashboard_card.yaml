@@ -1,0 +1,52 @@
+# Example dashboard card configuration for OREI HDMI Matrix
+# Add this to your dashboard configuration
+
+# Option 1: All outputs in one card
+type: entities
+title: HDMI Matrix Control
+show_header_toggle: false
+entities:
+  - entity: select.output1_input_selection
+    name: Output 1
+    icon: mdi:monitor
+  - entity: select.output2_input_selection  
+    name: Output 2
+    icon: mdi:monitor
+  - entity: select.output3_input_selection
+    name: Output 3
+    icon: mdi:monitor
+  - entity: select.output4_input_selection
+    name: Output 4
+    icon: mdi:monitor
+  - entity: select.output5_input_selection
+    name: Output 5
+    icon: mdi:monitor
+  - entity: select.output6_input_selection
+    name: Output 6
+    icon: mdi:monitor
+  - entity: select.output7_input_selection
+    name: Output 7
+    icon: mdi:monitor
+  - entity: select.output8_input_selection
+    name: Output 8
+    icon: mdi:monitor
+
+# Option 2: Individual cards for each output (better for custom names)
+# type: select
+# entity: select.output1_input_selection
+# name: Living Room TV
+# icon: mdi:monitor
+
+# Option 3: Grid layout with multiple cards
+# type: grid
+# columns: 2
+# square: false
+# cards:
+#   - type: select
+#     entity: select.output1_input_selection
+#     name: Living Room TV
+#     icon: mdi:monitor
+#   - type: select
+#     entity: select.output2_input_selection
+#     name: Bedroom TV
+#     icon: mdi:monitor

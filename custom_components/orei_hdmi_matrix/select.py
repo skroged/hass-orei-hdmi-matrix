@@ -65,7 +65,7 @@ class OreiHdmiMatrixOutputSelect(
         output_name = output_config.get(CONF_NAME, f"Output {output_num}")
         
         self._attr_unique_id = f"{entry.entry_id}_output_{output_num}"
-        self._attr_name = "Input Selection"
+        self._attr_name = output_name  # Use the device name as the entity name
         self._attr_device_info = {
             "identifiers": {(DOMAIN, f"{entry.entry_id}_output_{output_num}")},
             "name": output_name,
@@ -85,15 +85,21 @@ class OreiHdmiMatrixOutputSelect(
         output_config = outputs.get(str(self._output_num), {})
         available_inputs = output_config.get(CONF_AVAILABLE_INPUTS, list(range(1, NUM_INPUTS + 1)))
         
+        _LOGGER.debug("Output %d - inputs config: %s", self._output_num, inputs)
+        _LOGGER.debug("Output %d - available_inputs: %s", self._output_num, available_inputs)
+        
         # Build list of available input names (only enabled inputs)
         options = []
         for input_num in available_inputs:
             input_config = inputs.get(str(input_num), {})
+            _LOGGER.debug("Input %d config: %s", input_num, input_config)
             # Only include enabled inputs
             if input_config.get(CONF_INPUT_ENABLED, True):
                 input_name = input_config.get(CONF_NAME, f"Input {input_num}")
                 options.append(input_name)
+                _LOGGER.debug("Added input %d: %s", input_num, input_name)
         
+        _LOGGER.debug("Final options for output %d: %s", self._output_num, options)
         return options
 
     @property

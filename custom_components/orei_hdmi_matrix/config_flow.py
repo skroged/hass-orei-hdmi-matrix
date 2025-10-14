@@ -59,10 +59,24 @@ def create_default_config() -> dict[str, Any]:
     return {CONF_INPUTS: inputs, CONF_OUTPUTS: outputs}
 
 
+def clean_host(host: str) -> str:
+    """Clean the host input by removing protocol if present."""
+    host = host.strip()
+    if host.startswith(('http://', 'https://')):
+        host = host.split('://', 1)[1]
+    # Remove trailing slash if present
+    if host.endswith('/'):
+        host = host[:-1]
+    return host
+
+
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect."""
+    # Clean the host input
+    clean_host_value = clean_host(data[CONF_HOST])
+    
     async with OreiHdmiMatrixApi(
-        host=data[CONF_HOST],
+        host=clean_host_value,
         username=data[CONF_USERNAME],
         password=data[CONF_PASSWORD],
     ) as api:
@@ -71,7 +85,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 
         # Get device info to confirm connection
         status = await api.get_status()
-        return {"title": f"OREI HDMI Matrix ({data[CONF_HOST]})", "status": status}
+        return {"title": f"OREI HDMI Matrix ({clean_host_value})", "status": status}
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -102,6 +116,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         else:
             # Add default configuration for inputs and outputs
             config_data = user_input.copy()
+            # Clean the host value before saving
+            config_data[CONF_HOST] = clean_host(user_input[CONF_HOST])
             config_data.update(create_default_config())
             return self.async_create_entry(title=info["title"], data=config_data)
 

@@ -5,7 +5,7 @@
         "title": "OREI HDMI Matrix",
         "description": "Enter the connection details for your OREI HDMI Matrix",
         "data": {
-          "host": "Host/IP Address",
+          "host": "Host/IP Address (e.g., 192.168.1.100)",
           "username": "Username",
           "password": "Password"
         }

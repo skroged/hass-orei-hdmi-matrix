@@ -12,6 +12,7 @@ CONF_OUTPUTS = "outputs"
 CONF_NAME = "name"
 CONF_ENABLED = "enabled"
 CONF_AVAILABLE_INPUTS = "available_inputs"
+CONF_INPUT_ENABLED = "input_enabled"
 
 # Default values
 DEFAULT_USERNAME = "Admin"

@@ -19,6 +19,7 @@ from .const import (
     CONF_NAME,
     CONF_ENABLED,
     CONF_AVAILABLE_INPUTS,
+    CONF_INPUT_ENABLED,
     DEFAULT_PASSWORD,
     DEFAULT_USERNAME,
     DOMAIN,
@@ -46,6 +47,7 @@ def create_default_config() -> dict[str, Any]:
     for i in range(1, NUM_INPUTS + 1):
         inputs[str(i)] = {
             CONF_NAME: f"Input {i}",
+            CONF_INPUT_ENABLED: True,
         }
     
     # Create default output configuration
@@ -157,7 +159,25 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             # Update the configuration
             new_data = self.config_entry.data.copy()
-            new_data.update(user_input)
+            
+            # Process input configurations
+            inputs = {}
+            for i in range(1, NUM_INPUTS + 1):
+                inputs[str(i)] = {
+                    CONF_NAME: user_input[f"input_{i}_name"],
+                    CONF_INPUT_ENABLED: user_input[f"input_{i}_enabled"],
+                }
+            new_data[CONF_INPUTS] = inputs
+            
+            # Process output configurations
+            outputs = {}
+            for i in range(1, NUM_OUTPUTS + 1):
+                outputs[str(i)] = {
+                    CONF_NAME: user_input[f"output_{i}_name"],
+                    CONF_ENABLED: user_input[f"output_{i}_enabled"],
+                    CONF_AVAILABLE_INPUTS: list(range(1, NUM_INPUTS + 1)),  # Keep existing available inputs
+                }
+            new_data[CONF_OUTPUTS] = outputs
             
             self.hass.config_entries.async_update_entry(
                 self.config_entry, data=new_data
@@ -168,9 +188,15 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         input_fields = {}
         inputs = self.config_entry.data.get(CONF_INPUTS, {})
         for i in range(1, NUM_INPUTS + 1):
-            input_key = f"input_{i}_name"
+            # Input name
+            name_key = f"input_{i}_name"
             default_name = inputs.get(str(i), {}).get(CONF_NAME, f"Input {i}")
-            input_fields[vol.Required(input_key, default=default_name)] = str
+            input_fields[vol.Required(name_key, default=default_name)] = str
+            
+            # Input enabled
+            enabled_key = f"input_{i}_enabled"
+            default_enabled = inputs.get(str(i), {}).get(CONF_INPUT_ENABLED, True)
+            input_fields[vol.Required(enabled_key, default=default_enabled)] = bool
 
         # Create schema for outputs
         output_fields = {}

@@ -16,6 +16,7 @@ from .const import (
     CONF_NAME,
     CONF_ENABLED,
     CONF_AVAILABLE_INPUTS,
+    CONF_INPUT_ENABLED,
     DOMAIN,
     NUM_INPUTS,
     NUM_OUTPUTS,
@@ -82,12 +83,14 @@ class OreiHdmiMatrixOutputSelect(
         output_config = outputs.get(str(self._output_num), {})
         available_inputs = output_config.get(CONF_AVAILABLE_INPUTS, list(range(1, NUM_INPUTS + 1)))
         
-        # Build list of available input names
+        # Build list of available input names (only enabled inputs)
         options = []
         for input_num in available_inputs:
             input_config = inputs.get(str(input_num), {})
-            input_name = input_config.get(CONF_NAME, f"Input {input_num}")
-            options.append(input_name)
+            # Only include enabled inputs
+            if input_config.get(CONF_INPUT_ENABLED, True):
+                input_name = input_config.get(CONF_NAME, f"Input {input_num}")
+                options.append(input_name)
         
         return options
 

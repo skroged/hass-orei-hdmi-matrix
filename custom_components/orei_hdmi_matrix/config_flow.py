@@ -80,12 +80,22 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         username=data[CONF_USERNAME],
         password=data[CONF_PASSWORD],
     ) as api:
+        _LOGGER.info("Attempting to authenticate with OREI HDMI Matrix at %s", clean_host_value)
+        
         if not await api.authenticate():
+            _LOGGER.error("Authentication failed for OREI HDMI Matrix at %s", clean_host_value)
             raise CannotConnect
 
-        # Get device info to confirm connection
-        status = await api.get_status()
-        return {"title": f"OREI HDMI Matrix ({clean_host_value})", "status": status}
+        _LOGGER.info("Authentication successful, getting device status")
+        
+        try:
+            # Get device info to confirm connection
+            status = await api.get_status()
+            _LOGGER.info("Successfully retrieved device status: %s", status)
+            return {"title": f"OREI HDMI Matrix ({clean_host_value})", "status": status}
+        except Exception as err:
+            _LOGGER.error("Failed to get device status after authentication: %s", err)
+            raise CannotConnect
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

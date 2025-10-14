@@ -59,20 +59,29 @@ class OreiHdmiMatrixApi:
             raise OreiHdmiMatrixApiError("Session not initialized")
 
         url = f"http://{self.host}{API_ENDPOINT}"
+        _LOGGER.debug("Making API request to %s with data: %s", url, data)
         
         try:
             async with self._session.post(url, json=data) as response:
+                _LOGGER.debug("API response status: %s", response.status)
+                
                 if response.status != 200:
+                    response_text = await response.text()
+                    _LOGGER.error("HTTP error %s: %s, response: %s", response.status, response.reason, response_text)
                     raise OreiHdmiMatrixApiError(
                         f"HTTP error {response.status}: {response.reason}"
                     )
                 
                 result = await response.json()
-                _LOGGER.debug("API request: %s, response: %s", data, result)
+                _LOGGER.debug("API response: %s", result)
                 return result
                 
         except aiohttp.ClientError as err:
+            _LOGGER.error("Request failed to %s: %s", url, err)
             raise OreiHdmiMatrixApiError(f"Request failed: {err}") from err
+        except Exception as err:
+            _LOGGER.error("Unexpected error during API request to %s: %s", url, err)
+            raise OreiHdmiMatrixApiError(f"Unexpected error: {err}") from err
 
     async def authenticate(self) -> bool:
         """Authenticate with the matrix."""
@@ -83,14 +92,17 @@ class OreiHdmiMatrixApi:
         }
         
         try:
+            _LOGGER.info("Authenticating with OREI HDMI Matrix at %s", self.host)
             result = await self._request(data)
+            _LOGGER.debug("Authentication response: %s", result)
+            
             success = result.get("result") == 1
             self._authenticated = success
             
             if success:
                 _LOGGER.info("Successfully authenticated with OREI HDMI Matrix")
             else:
-                _LOGGER.error("Authentication failed")
+                _LOGGER.error("Authentication failed - result: %s", result.get("result"))
                 
             return success
             

@@ -154,7 +154,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         """Manage the options."""
         if user_input is not None:
             # Update the configuration
-            new_data = self._config_entry.data.copy()
+            new_data = self.config_entry.data.copy()
             
             # Process input configurations
             inputs = {}
@@ -176,13 +176,13 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             new_data[CONF_OUTPUTS] = outputs
             
             self.hass.config_entries.async_update_entry(
-                self._config_entry, data=new_data
+                self.config_entry, data=new_data
             )
             return self.async_create_entry(title="", data={})
 
         # Create schema for inputs
         input_fields = {}
-        inputs = self._config_entry.data.get(CONF_INPUTS, {})
+        inputs = self.config_entry.data.get(CONF_INPUTS, {})
         for i in range(1, NUM_INPUTS + 1):
             # Input name
             name_key = f"input_{i}_name"
@@ -196,7 +196,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
         # Create schema for outputs
         output_fields = {}
-        outputs = self._config_entry.data.get(CONF_OUTPUTS, {})
+        outputs = self.config_entry.data.get(CONF_OUTPUTS, {})
         for i in range(1, NUM_OUTPUTS + 1):
             # Output name
             name_key = f"output_{i}_name"

@@ -1,4 +1,5 @@
 """Constants for the OREI HDMI Matrix integration."""
+from datetime import timedelta
 
 DOMAIN = "orei_hdmi_matrix"
 
@@ -30,4 +31,4 @@ NUM_INPUTS = 8
 NUM_OUTPUTS = 8
 
 # Update intervals
-UPDATE_INTERVAL = 30  # seconds
+UPDATE_INTERVAL = timedelta(seconds=30)

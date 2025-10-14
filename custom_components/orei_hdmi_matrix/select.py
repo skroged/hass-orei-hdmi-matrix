@@ -85,35 +85,47 @@ class OreiHdmiMatrixOutputSelect(
         output_config = outputs.get(str(self._output_num), {})
         available_inputs = output_config.get(CONF_AVAILABLE_INPUTS, list(range(1, NUM_INPUTS + 1)))
         
-        _LOGGER.debug("Output %d - inputs config: %s", self._output_num, inputs)
-        _LOGGER.debug("Output %d - available_inputs: %s", self._output_num, available_inputs)
+        _LOGGER.info("Output %d - inputs config: %s", self._output_num, inputs)
+        _LOGGER.info("Output %d - available_inputs: %s", self._output_num, available_inputs)
         
         # Build list of available input names (only enabled inputs)
         options = []
         for input_num in available_inputs:
             input_config = inputs.get(str(input_num), {})
-            _LOGGER.debug("Input %d config: %s", input_num, input_config)
+            _LOGGER.info("Input %d config: %s", input_num, input_config)
             # Only include enabled inputs
             if input_config.get(CONF_INPUT_ENABLED, True):
                 input_name = input_config.get(CONF_NAME, f"Input {input_num}")
                 options.append(input_name)
-                _LOGGER.debug("Added input %d: %s", input_num, input_name)
+                _LOGGER.info("Added input %d: %s", input_num, input_name)
         
-        _LOGGER.debug("Final options for output %d: %s", self._output_num, options)
+        # Fallback: if no options found, provide default inputs
+        if not options:
+            _LOGGER.warning("No options found for output %d, using fallback", self._output_num)
+            for i in range(1, NUM_INPUTS + 1):
+                options.append(f"Input {i}")
+        
+        _LOGGER.info("Final options for output %d: %s", self._output_num, options)
         return options
 
     @property
     def current_option(self) -> str | None:
         """Return the currently selected option."""
         source_mapping = self.coordinator.data.get("source_mapping", [])
+        _LOGGER.info("Output %d - source_mapping: %s", self._output_num, source_mapping)
+        _LOGGER.info("Output %d - coordinator data: %s", self._output_num, self.coordinator.data)
+        
         if len(source_mapping) >= self._output_num:
             current_input = source_mapping[self._output_num - 1]
+            _LOGGER.info("Output %d - current_input: %d", self._output_num, current_input)
             if 1 <= current_input <= NUM_INPUTS:
                 # Get configured input name
                 inputs = self._entry.data.get(CONF_INPUTS, {})
                 input_config = inputs.get(str(current_input), {})
                 input_name = input_config.get(CONF_NAME, f"Input {current_input}")
+                _LOGGER.info("Output %d - current_option: %s", self._output_num, input_name)
                 return input_name
+        _LOGGER.info("Output %d - no current option", self._output_num)
         return None
 
     async def async_select_option(self, option: str) -> None:

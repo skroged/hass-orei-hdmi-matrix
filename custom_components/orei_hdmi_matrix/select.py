@@ -34,17 +34,27 @@ async def async_setup_entry(
     """Set up OREI HDMI Matrix select entities."""
     coordinator: OreiHdmiMatrixCoordinator = hass.data[DOMAIN][entry.entry_id]
 
+    _LOGGER.info("Setting up select entities for OREI HDMI Matrix")
+    _LOGGER.info("Entry data: %s", entry.data)
+
     entities = []
     outputs = entry.data.get(CONF_OUTPUTS, {})
+    
+    _LOGGER.info("Outputs configuration: %s", outputs)
     
     # Create a select entity for each enabled output
     for output_num in range(1, NUM_OUTPUTS + 1):
         output_config = outputs.get(str(output_num), {})
+        _LOGGER.info("Output %d config: %s", output_num, output_config)
         if output_config.get(CONF_ENABLED, True):
+            _LOGGER.info("Creating entity for enabled output %d", output_num)
             entities.append(
                 OreiHdmiMatrixOutputSelect(coordinator, entry, output_num)
             )
+        else:
+            _LOGGER.info("Skipping disabled output %d", output_num)
 
+    _LOGGER.info("Created %d select entities", len(entities))
     async_add_entities(entities)
 
 
@@ -59,10 +69,15 @@ class OreiHdmiMatrixOutputSelect(
         self._output_num = output_num
         self._entry = entry
         
+        _LOGGER.info("Initializing select entity for output %d", output_num)
+        
         # Get output configuration
         outputs = entry.data.get(CONF_OUTPUTS, {})
         output_config = outputs.get(str(output_num), {})
         output_name = output_config.get(CONF_NAME, f"Output {output_num}")
+        
+        _LOGGER.info("Output %d configuration: %s", output_num, output_config)
+        _LOGGER.info("Output %d name: %s", output_num, output_name)
         
         self._attr_unique_id = f"{entry.entry_id}_output_{output_num}"
         self._attr_name = output_name  # Use the device name as the entity name
@@ -75,6 +90,8 @@ class OreiHdmiMatrixOutputSelect(
         }
         self._attr_entity_category = None  # Make it a primary entity
         self._attr_icon = "mdi:monitor"  # Add a monitor icon
+        
+        _LOGGER.info("Created select entity: %s (unique_id: %s)", self._attr_name, self._attr_unique_id)
 
     @property
     def options(self) -> list[str]:

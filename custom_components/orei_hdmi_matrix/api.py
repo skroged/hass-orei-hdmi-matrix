@@ -64,6 +64,7 @@ class OreiHdmiMatrixApi:
         try:
             async with self._session.post(url, json=data) as response:
                 _LOGGER.debug("API response status: %s", response.status)
+                _LOGGER.debug("API response content-type: %s", response.headers.get('content-type', 'unknown'))
                 
                 if response.status != 200:
                     response_text = await response.text()
@@ -72,9 +73,20 @@ class OreiHdmiMatrixApi:
                         f"HTTP error {response.status}: {response.reason}"
                     )
                 
-                result = await response.json()
-                _LOGGER.debug("API response: %s", result)
-                return result
+                # Get the response text first to see what we're dealing with
+                response_text = await response.text()
+                _LOGGER.debug("API response text: %s", response_text)
+                
+                # Try to parse as JSON
+                try:
+                    import json
+                    result = json.loads(response_text)
+                    _LOGGER.debug("API response JSON: %s", result)
+                    return result
+                except json.JSONDecodeError as json_err:
+                    _LOGGER.error("Failed to parse JSON response: %s, response text: %s", json_err, response_text)
+                    # If it's not JSON, it might be plain text - let's try to handle it
+                    raise OreiHdmiMatrixApiError(f"Invalid JSON response: {response_text}")
                 
         except aiohttp.ClientError as err:
             _LOGGER.error("Request failed to %s: %s", url, err)

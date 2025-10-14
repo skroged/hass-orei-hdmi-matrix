@@ -1,0 +1,6 @@
+refresh:
+  name: Refresh
+  description: Force an immediate refresh of the OREI HDMI Matrix status
+  target:
+    device:
+      integration: orei_hdmi_matrix

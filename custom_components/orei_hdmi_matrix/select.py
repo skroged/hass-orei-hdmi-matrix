@@ -65,7 +65,7 @@ class OreiHdmiMatrixOutputSelect(
         output_name = output_config.get(CONF_NAME, f"Output {output_num}")
         
         self._attr_unique_id = f"{entry.entry_id}_output_{output_num}"
-        self._attr_name = f"{output_name} Input"
+        self._attr_name = "Input Selection"
         self._attr_device_info = {
             "identifiers": {(DOMAIN, f"{entry.entry_id}_output_{output_num}")},
             "name": output_name,
@@ -73,6 +73,8 @@ class OreiHdmiMatrixOutputSelect(
             "model": "8x8 HDMI Matrix",
             "via_device": (DOMAIN, entry.entry_id),
         }
+        self._attr_entity_category = None  # Make it a primary entity
+        self._attr_icon = "mdi:monitor"  # Add a monitor icon
 
     @property
     def options(self) -> list[str]:

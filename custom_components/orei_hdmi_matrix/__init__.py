@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN
 from .coordinator import OreiHdmiMatrixCoordinator
@@ -29,6 +30,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Register services
+    async def async_refresh_service(service_call):
+        """Handle refresh service call."""
+        device_id = service_call.data.get("device_id")
+        if device_id:
+            # Find the coordinator for this device
+            for entry_id, coord in hass.data[DOMAIN].items():
+                if coord.entry.entry_id == entry_id:
+                    await coord.async_refresh_now()
+                    break
+        else:
+            # Refresh all coordinators
+            for coord in hass.data[DOMAIN].values():
+                await coord.async_refresh_now()
+
+    hass.services.async_register(DOMAIN, "refresh", async_refresh_service)
 
     return True
 

@@ -13,11 +13,13 @@ CONF_NAME = "name"
 CONF_ENABLED = "enabled"
 CONF_AVAILABLE_INPUTS = "available_inputs"
 CONF_INPUT_ENABLED = "input_enabled"
+CONF_UPDATE_INTERVAL = "update_interval"
 
 # Default values
 DEFAULT_USERNAME = "Admin"
 DEFAULT_PASSWORD = "admin"
 DEFAULT_TIMEOUT = 10
+DEFAULT_UPDATE_INTERVAL = 5  # seconds
 
 # API endpoints
 API_ENDPOINT = "/cgi-bin/instr"
@@ -32,4 +34,4 @@ NUM_INPUTS = 8
 NUM_OUTPUTS = 8
 
 # Update intervals
-UPDATE_INTERVAL = timedelta(seconds=30)
+UPDATE_INTERVAL = timedelta(seconds=5)  # Fast polling for responsive interface

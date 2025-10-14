@@ -1,0 +1,11 @@
+{
+  "domain": "orei_hdmi_matrix",
+  "name": "OREI HDMI Matrix",
+  "documentation": "https://github.com/skroged/hass-orei-hdmi-matrix",
+  "issue_tracker": "https://github.com/skroged/hass-orei-hdmi-matrix/issues",
+  "codeowners": ["@skroged"],
+  "requirements": ["aiohttp>=3.8.0"],
+  "version": "1.0.0",
+  "config_flow": true,
+  "iot_class": "local_polling"
+}

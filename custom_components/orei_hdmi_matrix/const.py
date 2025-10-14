@@ -1,0 +1,28 @@
+"""Constants for the OREI HDMI Matrix integration."""
+
+DOMAIN = "orei_hdmi_matrix"
+
+# Configuration keys
+CONF_HOST = "host"
+CONF_USERNAME = "username"
+CONF_PASSWORD = "password"
+
+# Default values
+DEFAULT_USERNAME = "Admin"
+DEFAULT_PASSWORD = "admin"
+DEFAULT_TIMEOUT = 10
+
+# API endpoints
+API_ENDPOINT = "/cgi-bin/instr"
+
+# API commands
+CMD_LOGIN = "login"
+CMD_GET_STATUS = "get video status"
+CMD_VIDEO_SWITCH = "video switch"
+
+# Matrix configuration
+NUM_INPUTS = 8
+NUM_OUTPUTS = 8
+
+# Update intervals
+UPDATE_INTERVAL = 30  # seconds

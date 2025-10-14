@@ -38,6 +38,8 @@ This integration is designed for OREI 8x8 HDMI matrix switches with web interfac
 
 ## Configuration
 
+### Initial Setup
+
 1. Go to **Settings** → **Devices & Services**
 2. Click **Add Integration**
 3. Search for "OREI HDMI Matrix"
@@ -46,15 +48,42 @@ This integration is designed for OREI 8x8 HDMI matrix switches with web interfac
    - **Username**: Usually `Admin` (default)
    - **Password**: Usually `admin` (default)
 
+### Configuring Inputs and Outputs
+
+After the initial setup, you can configure your inputs and outputs:
+
+1. Go to **Settings** → **Devices & Services**
+2. Find your OREI HDMI Matrix integration
+3. Click the **Configure** button (gear icon)
+4. Configure each input and output:
+   - **Input Names**: Give meaningful names to your inputs (e.g., "Living Room Apple TV", "Gaming Console", "Cable Box")
+   - **Output Names**: Name your outputs (e.g., "Living Room TV", "Bedroom TV", "Office Monitor")
+   - **Output Enabled**: Enable/disable outputs you don't want to control
+
+### Input/Output Configuration
+
+- **Inputs**: Each of the 8 inputs can be given a custom name to make them easier to identify
+- **Outputs**: Each of the 8 outputs can be:
+  - Given a custom name
+  - Enabled or disabled (disabled outputs won't appear as entities)
+  - Configured to show only specific inputs (all inputs available by default)
+
 ## Usage
 
-After configuration, you'll have 8 select entities created:
+After configuration, you'll have select entities created for each enabled output:
 
-- `select.output_1_input` - Choose input for Output 1
-- `select.output_2_input` - Choose input for Output 2
-- ... and so on for all 8 outputs
+- `select.living_room_tv_input` - Choose input for Living Room TV (if you named Output 1 "Living Room TV")
+- `select.bedroom_tv_input` - Choose input for Bedroom TV (if you named Output 2 "Bedroom TV")
+- ... and so on for all enabled outputs
 
-Each select entity will show the available inputs (Input1, Input2, etc.) and allow you to change which input is connected to that output.
+Each select entity will show the available inputs with their configured names and allow you to change which input is connected to that output.
+
+### Device Organization
+
+Each output appears as its own device in Home Assistant, making it easy to:
+- Organize in dashboards by room or location
+- Create automations specific to each display
+- Control individual outputs independently
 
 ### Example Automation
 
@@ -68,9 +97,9 @@ automation:
     action:
       service: select.select_option
       target:
-        entity_id: select.output_1_input
+        entity_id: select.living_room_tv_input
       data:
-        option: "Input3"  # Assuming gaming console is on Input 3
+        option: "Gaming Console"  # Using the configured input name
 ```
 
 ### Example Script
@@ -82,14 +111,14 @@ script:
     sequence:
       - service: select.select_option
         target:
-          entity_id: select.output_1_input  # Living Room TV
+          entity_id: select.living_room_tv_input
         data:
-          option: "Input1"  # Media Player
+          option: "Apple TV"  # Using configured input name
       - service: select.select_option
         target:
-          entity_id: select.output_2_input  # Bedroom TV
+          entity_id: select.bedroom_tv_input
         data:
-          option: "Input1"  # Media Player
+          option: "Apple TV"  # Using configured input name
 ```
 
 ## API Details

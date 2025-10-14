@@ -6,6 +6,11 @@ DOMAIN = "orei_hdmi_matrix"
 CONF_HOST = "host"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
+CONF_INPUTS = "inputs"
+CONF_OUTPUTS = "outputs"
+CONF_NAME = "name"
+CONF_ENABLED = "enabled"
+CONF_AVAILABLE_INPUTS = "available_inputs"
 
 # Default values
 DEFAULT_USERNAME = "Admin"

@@ -19,5 +19,39 @@
     "abort": {
       "already_configured": "This OREI HDMI Matrix is already configured."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Inputs and Outputs",
+        "description": "Configure the names and settings for your HDMI matrix inputs and outputs.",
+        "data": {
+          "input_1_name": "Input 1 Name",
+          "input_2_name": "Input 2 Name",
+          "input_3_name": "Input 3 Name",
+          "input_4_name": "Input 4 Name",
+          "input_5_name": "Input 5 Name",
+          "input_6_name": "Input 6 Name",
+          "input_7_name": "Input 7 Name",
+          "input_8_name": "Input 8 Name",
+          "output_1_name": "Output 1 Name",
+          "output_1_enabled": "Output 1 Enabled",
+          "output_2_name": "Output 2 Name",
+          "output_2_enabled": "Output 2 Enabled",
+          "output_3_name": "Output 3 Name",
+          "output_3_enabled": "Output 3 Enabled",
+          "output_4_name": "Output 4 Name",
+          "output_4_enabled": "Output 4 Enabled",
+          "output_5_name": "Output 5 Name",
+          "output_5_enabled": "Output 5 Enabled",
+          "output_6_name": "Output 6 Name",
+          "output_6_enabled": "Output 6 Enabled",
+          "output_7_name": "Output 7 Name",
+          "output_7_enabled": "Output 7 Enabled",
+          "output_8_name": "Output 8 Name",
+          "output_8_enabled": "Output 8 Enabled"
+        }
+      }
+    }
   }
 }

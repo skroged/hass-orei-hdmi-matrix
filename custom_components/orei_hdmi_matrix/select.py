@@ -10,7 +10,16 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN, NUM_INPUTS, NUM_OUTPUTS
+from .const import (
+    CONF_INPUTS,
+    CONF_OUTPUTS,
+    CONF_NAME,
+    CONF_ENABLED,
+    CONF_AVAILABLE_INPUTS,
+    DOMAIN,
+    NUM_INPUTS,
+    NUM_OUTPUTS,
+)
 from .coordinator import OreiHdmiMatrixCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,12 +34,15 @@ async def async_setup_entry(
     coordinator: OreiHdmiMatrixCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     entities = []
+    outputs = entry.data.get(CONF_OUTPUTS, {})
     
-    # Create a select entity for each output
+    # Create a select entity for each enabled output
     for output_num in range(1, NUM_OUTPUTS + 1):
-        entities.append(
-            OreiHdmiMatrixOutputSelect(coordinator, output_num)
-        )
+        output_config = outputs.get(str(output_num), {})
+        if output_config.get(CONF_ENABLED, True):
+            entities.append(
+                OreiHdmiMatrixOutputSelect(coordinator, entry, output_num)
+            )
 
     async_add_entities(entities)
 
@@ -40,27 +52,44 @@ class OreiHdmiMatrixOutputSelect(
 ):
     """Select entity for choosing input for an output."""
 
-    def __init__(self, coordinator: OreiHdmiMatrixCoordinator, output_num: int) -> None:
+    def __init__(self, coordinator: OreiHdmiMatrixCoordinator, entry: ConfigEntry, output_num: int) -> None:
         """Initialize the select entity."""
         super().__init__(coordinator)
         self._output_num = output_num
-        self._attr_unique_id = f"{coordinator.entry.entry_id}_output_{output_num}"
-        self._attr_name = f"Output {output_num} Input"
+        self._entry = entry
+        
+        # Get output configuration
+        outputs = entry.data.get(CONF_OUTPUTS, {})
+        output_config = outputs.get(str(output_num), {})
+        output_name = output_config.get(CONF_NAME, f"Output {output_num}")
+        
+        self._attr_unique_id = f"{entry.entry_id}_output_{output_num}"
+        self._attr_name = f"{output_name} Input"
         self._attr_device_info = {
-            "identifiers": {(DOMAIN, coordinator.entry.entry_id)},
-            "name": "OREI HDMI Matrix",
+            "identifiers": {(DOMAIN, f"{entry.entry_id}_output_{output_num}")},
+            "name": output_name,
             "manufacturer": "OREI",
             "model": "8x8 HDMI Matrix",
+            "via_device": (DOMAIN, entry.entry_id),
         }
 
     @property
     def options(self) -> list[str]:
         """Return the available options."""
-        input_names = self.coordinator.data.get("input_names", [])
-        if not input_names:
-            # Fallback to generic names if we don't have the actual names
-            return [f"Input {i}" for i in range(1, NUM_INPUTS + 1)]
-        return input_names
+        # Get configured inputs
+        inputs = self._entry.data.get(CONF_INPUTS, {})
+        outputs = self._entry.data.get(CONF_OUTPUTS, {})
+        output_config = outputs.get(str(self._output_num), {})
+        available_inputs = output_config.get(CONF_AVAILABLE_INPUTS, list(range(1, NUM_INPUTS + 1)))
+        
+        # Build list of available input names
+        options = []
+        for input_num in available_inputs:
+            input_config = inputs.get(str(input_num), {})
+            input_name = input_config.get(CONF_NAME, f"Input {input_num}")
+            options.append(input_name)
+        
+        return options
 
     @property
     def current_option(self) -> str | None:
@@ -69,26 +98,29 @@ class OreiHdmiMatrixOutputSelect(
         if len(source_mapping) >= self._output_num:
             current_input = source_mapping[self._output_num - 1]
             if 1 <= current_input <= NUM_INPUTS:
-                input_names = self.coordinator.data.get("input_names", [])
-                if input_names and len(input_names) >= current_input:
-                    return input_names[current_input - 1]
-                else:
-                    return f"Input {current_input}"
+                # Get configured input name
+                inputs = self._entry.data.get(CONF_INPUTS, {})
+                input_config = inputs.get(str(current_input), {})
+                input_name = input_config.get(CONF_NAME, f"Input {current_input}")
+                return input_name
         return None
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        # Find the input number for the selected option
-        input_names = self.coordinator.data.get("input_names", [])
-        if input_names and option in input_names:
-            input_num = input_names.index(option) + 1
-        else:
-            # Fallback: try to extract number from "Input X" format
-            try:
-                input_num = int(option.split()[-1])
-            except (ValueError, IndexError):
-                _LOGGER.error("Could not determine input number for option: %s", option)
-                return
+        # Find the input number for the selected option by matching configured names
+        inputs = self._entry.data.get(CONF_INPUTS, {})
+        input_num = None
+        
+        for i in range(1, NUM_INPUTS + 1):
+            input_config = inputs.get(str(i), {})
+            input_name = input_config.get(CONF_NAME, f"Input {i}")
+            if input_name == option:
+                input_num = i
+                break
+        
+        if input_num is None:
+            _LOGGER.error("Could not find input number for option: %s", option)
+            return
 
         if not (1 <= input_num <= NUM_INPUTS):
             _LOGGER.error("Invalid input number: %d", input_num)

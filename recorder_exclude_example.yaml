@@ -1,7 +1,7 @@
 # Add this to your Home Assistant configuration.yaml
-# This will prevent history and activity tracking for HDMI matrix entities
+# This will hide Activity section (logbook) while keeping History for HDMI matrix entities
 
-recorder:
+logbook:
   exclude:
     entities:
       - select.output1_input_selection
@@ -15,3 +15,11 @@ recorder:
     # Or use a pattern to match all HDMI matrix entities:
     # entity_globs:
     #   - "select.*input_selection"
+
+# If you want to completely hide both History and Activity sections:
+# recorder:
+#   exclude:
+#     entities:
+#       - select.output1_input_selection
+#       - select.output2_input_selection
+#       # ... add all your HDMI matrix entities

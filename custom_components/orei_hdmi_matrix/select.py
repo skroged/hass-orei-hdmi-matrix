@@ -80,7 +80,7 @@ class OreiHdmiMatrixOutputSelect(
         _LOGGER.info("Output %d name: %s", output_num, output_name)
         
         self._attr_unique_id = f"{entry.entry_id}_output_{output_num}"
-        self._attr_name = output_name  # Use the device name as the entity name
+        self._attr_name = "Input Selection"
         self._attr_device_info = {
             "identifiers": {(DOMAIN, f"{entry.entry_id}_output_{output_num}")},
             "name": output_name,
@@ -90,6 +90,13 @@ class OreiHdmiMatrixOutputSelect(
         }
         self._attr_entity_category = None  # Make it a primary entity
         self._attr_icon = "mdi:monitor"  # Add a monitor icon
+        self._attr_entity_picture = None  # Could add custom icons
+        self._attr_has_entity_name = True  # Better device organization
+        
+        # Add custom attributes for better dashboard display
+        self._attr_device_class = "tv"  # Treat as TV device
+        self._attr_state_class = None
+        self._attr_unit_of_measurement = None
         
         _LOGGER.info("Created select entity: %s (unique_id: %s)", self._attr_name, self._attr_unique_id)
 

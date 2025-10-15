@@ -151,26 +151,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Manage the options - show menu."""
-        if user_input is not None:
-            if user_input["action"] == "configure_inputs":
-                return await self.async_step_configure_inputs()
-            elif user_input["action"] == "configure_outputs":
-                return await self.async_step_configure_outputs()
-        
-        return self.async_show_form(
-            step_id="init",
-            data_schema=vol.Schema({
-                vol.Required("action", default="configure_inputs"): vol.In({
-                    "configure_inputs": "Configure Inputs",
-                    "configure_outputs": "Configure Outputs",
-                })
-            }),
-        )
-
-    async def async_step_configure_inputs(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
         """Configure inputs."""
         if user_input is not None:
             # Update the configuration
@@ -188,7 +168,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self.hass.config_entries.async_update_entry(
                 self.config_entry, data=new_data
             )
-            return await self.async_step_init()
+            return self.async_create_entry(title="", data={})
 
         # Create schema for inputs
         input_fields = {}
@@ -207,51 +187,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         schema = vol.Schema(input_fields)
         
         return self.async_show_form(
-            step_id="configure_inputs",
-            data_schema=schema,
-        )
-
-    async def async_step_configure_outputs(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Configure outputs."""
-        if user_input is not None:
-            # Update the configuration
-            new_data = self.config_entry.data.copy()
-            
-            # Process output configurations
-            outputs = {}
-            for i in range(1, NUM_OUTPUTS + 1):
-                outputs[str(i)] = {
-                    CONF_NAME: user_input[f"output_{i}_name"],
-                    CONF_ENABLED: user_input[f"output_{i}_enabled"],
-                    CONF_AVAILABLE_INPUTS: list(range(1, NUM_INPUTS + 1)),  # Keep existing available inputs
-                }
-            new_data[CONF_OUTPUTS] = outputs
-            
-            self.hass.config_entries.async_update_entry(
-                self.config_entry, data=new_data
-            )
-            return await self.async_step_init()
-
-        # Create schema for outputs
-        output_fields = {}
-        outputs = self.config_entry.data.get(CONF_OUTPUTS, {})
-        for i in range(1, NUM_OUTPUTS + 1):
-            # Output name
-            name_key = f"output_{i}_name"
-            default_name = outputs.get(str(i), {}).get(CONF_NAME, f"Output {i}")
-            output_fields[vol.Required(name_key, default=default_name)] = str
-            
-            # Output enabled
-            enabled_key = f"output_{i}_enabled"
-            default_enabled = outputs.get(str(i), {}).get(CONF_ENABLED, True)
-            output_fields[vol.Required(enabled_key, default=default_enabled)] = bool
-
-        schema = vol.Schema(output_fields)
-        
-        return self.async_show_form(
-            step_id="configure_outputs",
+            step_id="init",
             data_schema=schema,
         )
 

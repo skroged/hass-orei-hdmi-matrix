@@ -98,6 +98,15 @@ class OreiHdmiMatrixOutputSelect(
         self._attr_state_class = None
         self._attr_unit_of_measurement = None
         
+        # Disable history and activity tracking
+        self._attr_force_update = False
+        self._attr_should_poll = False
+        
+        # Add custom attributes to exclude from history
+        self._attr_extra_state_attributes = {
+            "exclude_from_recorder": True
+        }
+        
         _LOGGER.info("Created select entity: %s (unique_id: %s)", self._attr_name, self._attr_unique_id)
 
     @property

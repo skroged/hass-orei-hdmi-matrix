@@ -1,0 +1,17 @@
+# Add this to your Home Assistant configuration.yaml
+# This will prevent history and activity tracking for HDMI matrix entities
+
+recorder:
+  exclude:
+    entities:
+      - select.output1_input_selection
+      - select.output2_input_selection
+      - select.output3_input_selection
+      - select.output4_input_selection
+      - select.output5_input_selection
+      - select.output6_input_selection
+      - select.output7_input_selection
+      - select.output8_input_selection
+    # Or use a pattern to match all HDMI matrix entities:
+    # entity_globs:
+    #   - "select.*input_selection"

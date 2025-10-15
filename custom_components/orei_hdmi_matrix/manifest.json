@@ -7,5 +7,10 @@
   "requirements": ["aiohttp>=3.8.0"],
   "version": "1.0.0",
   "config_flow": true,
-  "iot_class": "local_polling"
+  "iot_class": "local_polling",
+  "frontend": {
+    "extra_html_url": [
+      "/local/orei-hdmi-matrix-card.js"
+    ]
+  }
 }

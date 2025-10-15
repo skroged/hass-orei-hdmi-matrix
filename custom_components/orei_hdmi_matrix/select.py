@@ -102,11 +102,11 @@ class OreiHdmiMatrixOutputSelect(
         self._attr_force_update = False
         self._attr_should_poll = False
         
-        # Hide from logbook (Activity section) while keeping history
+        # Set custom more-info dialog
         self._attr_extra_state_attributes = {
-            "logbook_exclude": True
+            "more_info_type": "custom:orei-hdmi-matrix-card"
         }
-        
+               
         _LOGGER.info("Created select entity: %s (unique_id: %s)", self._attr_name, self._attr_unique_id)
 
     @property

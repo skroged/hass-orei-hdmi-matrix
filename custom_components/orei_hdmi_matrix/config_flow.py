@@ -177,12 +177,12 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             # Input name
             name_key = f"input_{i}_name"
             default_name = inputs.get(str(i), {}).get(CONF_NAME, f"Input {i}")
-            input_fields[vol.Required(name_key, default=default_name, title=f"Input {i} Name")] = str
+            input_fields[vol.Required(name_key, default=default_name)] = str
             
             # Input enabled
             enabled_key = f"input_{i}_enabled"
             default_enabled = inputs.get(str(i), {}).get(CONF_INPUT_ENABLED, True)
-            input_fields[vol.Required(enabled_key, default=default_enabled, title=f"Enable Input {i}")] = bool
+            input_fields[vol.Required(enabled_key, default=default_enabled)] = bool
 
         schema = vol.Schema(input_fields)
         

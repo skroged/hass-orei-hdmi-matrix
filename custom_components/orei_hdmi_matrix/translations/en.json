@@ -1,0 +1,49 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "OREI HDMI Matrix",
+        "description": "Enter the connection details for your OREI HDMI Matrix",
+        "data": {
+          "host": "Host/IP Address (e.g., 192.168.1.100)",
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to the OREI HDMI Matrix. Please check the host address and try again.",
+      "invalid_auth": "Invalid authentication credentials. Please check your username and password.",
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "abort": {
+      "already_configured": "This OREI HDMI Matrix is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configure Inputs",
+        "description": "Set names and enable/disable inputs for your HDMI matrix.",
+        "data": {
+          "input_1_name": "Input 1 Name",
+          "input_1_enabled": "Enable Input 1",
+          "input_2_name": "Input 2 Name", 
+          "input_2_enabled": "Enable Input 2",
+          "input_3_name": "Input 3 Name",
+          "input_3_enabled": "Enable Input 3",
+          "input_4_name": "Input 4 Name",
+          "input_4_enabled": "Enable Input 4",
+          "input_5_name": "Input 5 Name",
+          "input_5_enabled": "Enable Input 5",
+          "input_6_name": "Input 6 Name",
+          "input_6_enabled": "Enable Input 6",
+          "input_7_name": "Input 7 Name",
+          "input_7_enabled": "Enable Input 7",
+          "input_8_name": "Input 8 Name",
+          "input_8_enabled": "Enable Input 8"
+        }
+      }
+    }
+  }
+}

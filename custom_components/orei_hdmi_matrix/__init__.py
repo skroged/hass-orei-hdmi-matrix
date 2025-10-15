@@ -12,7 +12,7 @@ from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN
 from .coordinator import OreiHdmiMatrixCoordinator
-from .more_info import async_setup as async_setup_more_info
+from .frontend import async_setup_frontend
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.services.async_register(DOMAIN, "refresh", async_refresh_service)
 
     # Set up custom more-info dialog
-    await async_setup_more_info(hass, {})
+    await async_setup_frontend(hass)
 
     return True
 

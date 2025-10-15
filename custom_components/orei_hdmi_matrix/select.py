@@ -102,10 +102,7 @@ class OreiHdmiMatrixOutputSelect(
         self._attr_force_update = False
         self._attr_should_poll = False
         
-        # Set custom more-info dialog
-        self._attr_extra_state_attributes = {
-            "more_info_type": "custom:orei-hdmi-matrix-card"
-        }
+        # No custom more-info dialog - use manual configuration instead
                
         _LOGGER.info("Created select entity: %s (unique_id: %s)", self._attr_name, self._attr_unique_id)
 
